@@ -23,6 +23,8 @@ struct JobListView: View {
 
                             Text(job.company)
                                 .font(.subheadline)
+                            
+                            
 
                             Text(job.location)
                                 .font(.caption)

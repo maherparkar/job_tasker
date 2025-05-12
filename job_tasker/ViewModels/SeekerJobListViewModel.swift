@@ -1,21 +1,41 @@
+import Foundation
 import Firebase
 import FirebaseAuth
 import FirebaseFirestore
-import Foundation
 
 class SeekerJobListViewModel: ObservableObject {
     @Published var jobs: [Job] = []
 
     func fetchJobs() {
-        Firestore.firestore().collection("jobs")
-            .whereField("postedBy", isEqualTo: Auth.auth().currentUser?.uid ?? "") // change this to where `applicant` is equal to current user id
-            .order(by: "postedDate", descending: true)
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+
+        Firestore.firestore().collection("applied_jobs")
+            .whereField("userId", isEqualTo: userId)
             .getDocuments { snapshot, error in
-                if let snapshot = snapshot {
-                    self.jobs = snapshot.documents.compactMap { doc in
-                        try? doc.data(as: Job.self)
+                guard let documents = snapshot?.documents else { return }
+
+                let jobIds = documents.compactMap { $0["jobId"] as? String }
+
+                // Only proceed if jobIds array is not empty
+                guard !jobIds.isEmpty else {
+                    DispatchQueue.main.async {
+                        self.jobs = []
                     }
+                    return
                 }
+
+                Firestore.firestore().collection("jobs")
+                    .whereField(FieldPath.documentID(), in: jobIds)
+                    .getDocuments { jobSnapshot, error in
+                        guard let jobDocs = jobSnapshot?.documents else { return }
+
+                        DispatchQueue.main.async {
+                            self.jobs = jobDocs.compactMap { doc in
+                                try? doc.data(as: Job.self)
+                            }
+                        }
+                    }
             }
     }
 }
+

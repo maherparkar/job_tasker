@@ -1,9 +1,7 @@
-
-
 import SwiftUI
 
 struct SeekerJobListView: View {
-    @StateObject var seekerJobListVM = SeekerJobListViewModel()
+    @StateObject private var seekerJobListVM = SeekerJobListViewModel()
 
     var body: some View {
         NavigationView {
@@ -17,26 +15,19 @@ struct SeekerJobListView: View {
                             Text(job.company)
                                 .font(.subheadline)
 
-                            Text(job.location)
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                            Text("Salary: \(job.salary ?? "Not specified")")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
                         }
                         .padding(.vertical, 6)
                     }
                 }
             }
-            .listStyle(PlainListStyle())
             .navigationTitle("My Jobs")
-            .refreshable {
-                seekerJobListVM.fetchJobs()
+            .onAppear {
+                seekerJobListVM.fetchJobs()  // ✅ Correct usage
             }
-        }
-        .onAppear {
-            seekerJobListVM.fetchJobs()
         }
     }
 }
 
-#Preview {
-    SeekerJobListView()
-}

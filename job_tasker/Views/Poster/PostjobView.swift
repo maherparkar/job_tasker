@@ -17,6 +17,7 @@ struct PostJobView: View {
     @State private var description = ""
     @State private var successMessage = ""
     @State private var errorMessage = ""
+    @State private var salary = ""
     
     @State private var goToMyPosts = false
 
@@ -37,6 +38,9 @@ struct PostJobView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
                 TextField("Location", text: $location)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("Salary", text: $salary)
+                    .keyboardType(.numberPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
                 ZStack(alignment: .topLeading) {
@@ -113,8 +117,10 @@ struct PostJobView: View {
             "company": company,
             "location": location,
             "description": description,
+            "salary": salary,
             "postedBy": user.uid,
             "postedDate": Timestamp(),
+            
         ]
 
         db.collection("jobs").addDocument(data: jobData) { error in

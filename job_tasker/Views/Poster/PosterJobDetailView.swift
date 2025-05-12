@@ -17,6 +17,10 @@ struct PosterJobDetailView: View {
 
                 Text("Location: \(job.location.isEmpty ? "N/A" : job.location)")
                     .font(.subheadline)
+                
+                Text("Salary: \(job.salary?.isEmpty == false ? job.salary : "Not specified")")
+                                .font(.subheadline)
+                                .foregroundColor(.blue)
 
                 Divider()
 
@@ -39,5 +43,14 @@ struct PosterJobDetailView: View {
 }
 
 #Preview {
-    PosterJobDetailView(job: Job(title: "Test", company: "Test Company", location: "Sydney", description: "Testing Job", postedBy: "1234", postedDate: Date.now))
+    PosterJobDetailView(job: Job(
+        id: "Test",
+        title: "Test Company",
+        company: "Sydney",
+        location: "Testing Job",
+        description: "$100,000",                    // ✅ Add this line
+        salary:"100000", postedBy: "1234",
+        postedDate: Date.now
+    ))
+
 }

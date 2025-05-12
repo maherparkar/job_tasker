@@ -4,6 +4,7 @@ import Firebase
 struct SeekerJobDetailView: View {
     let job: Job
     @State private var showApplyAlert = false
+    
 
     var body: some View {
         ScrollView {
@@ -14,6 +15,10 @@ struct SeekerJobDetailView: View {
 
                 Text("Company: \(job.company.isEmpty ? "N/A" : job.company)")
                     .font(.headline)
+                
+                Text("Salary: \(job.salary?.isEmpty == false ? job.salary : "Not specified")")
+                                .font(.subheadline)
+                                .foregroundColor(.blue)
 
                 Text("Location: \(job.location.isEmpty ? "N/A" : job.location)")
                     .font(.subheadline)
@@ -33,5 +38,14 @@ struct SeekerJobDetailView: View {
 }
 
 #Preview {
-    PosterJobDetailView(job: Job(title: "Test", company: "Test Company", location: "Sydney", description: "Testing Job", postedBy: "1234", postedDate: Date.now))
+    PosterJobDetailView(job: Job(
+        id: "test_id", // Add a dummy or test ID here
+        title: "Test",
+        company: "Test Company",
+        location: "Sydney",
+        description: "Testing Job",
+        salary: "$100,000", postedBy: "1234",
+        postedDate: Date.now
+    ))
+
 }
