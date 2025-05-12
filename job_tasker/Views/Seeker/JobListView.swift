@@ -10,6 +10,7 @@ import Firebase
 
 struct JobListView: View {
     @StateObject var viewModel = JobListViewModel()
+    @EnvironmentObject var authVM: AuthViewModel
 
     var body: some View {
         NavigationView {
@@ -33,6 +34,15 @@ struct JobListView: View {
             }
             .listStyle(PlainListStyle())
             .navigationTitle("Available Jobs")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        authVM.logout()
+                    }, label: {
+                        Text("Logout")
+                    })
+                }
+            }
             .refreshable {
                 viewModel.fetchJobs()
             }
@@ -43,3 +53,6 @@ struct JobListView: View {
     }
 }
 
+#Preview {
+    JobListView()
+}

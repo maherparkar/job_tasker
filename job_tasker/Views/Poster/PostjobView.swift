@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseAuth
+import FirebaseFirestore
 
 struct PostJobView: View {
     @State private var title = ""
@@ -16,6 +17,8 @@ struct PostJobView: View {
     @State private var description = ""
     @State private var successMessage = ""
     @State private var errorMessage = ""
+    
+    @EnvironmentObject var authVM: AuthViewModel
 
     var body: some View {
         NavigationView {
@@ -72,6 +75,15 @@ struct PostJobView: View {
                 .padding()
             }
             .navigationTitle("Job Posting")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        authVM.logout()
+                    }, label: {
+                        Text("Logout")
+                    })
+                }
+            }
         }
     }
 
@@ -113,3 +125,6 @@ struct PostJobView: View {
     }
 }
 
+#Preview {
+    PostJobView()
+}
