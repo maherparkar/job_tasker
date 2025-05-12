@@ -1,20 +1,39 @@
-//
-//  job_taskerApp.swift
-//  job_tasker
-//
-//  Created by Maher Parkar on 10/5/2025.
-//
-
 import SwiftUI
+import Firebase
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        return true
+    }
+}
 
 @main
-struct job_taskerApp: App {
-    let persistenceController = PersistenceController.shared
+struct JobTaskerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var authVM = AuthViewModel()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            RootView()
+                .environmentObject(authVM)
+        }
+    }
+}
+
+struct RootView: View {
+    @EnvironmentObject var authVM: AuthViewModel
+
+    var body: some View {
+        if authVM.firebaseUser == nil {
+            SelectUserRoleView()
+        } else {
+            if authVM.appUser?.role == "poster" {
+                PostJobView()
+            } else {
+                JobListView()
+            }
         }
     }
 }

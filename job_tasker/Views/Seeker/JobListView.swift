@@ -1,0 +1,45 @@
+//
+//  JobListView.swift
+//  job_tasker
+//
+//  Created by Maher Parkar on 11/5/2025.
+//
+
+import SwiftUI
+import Firebase
+
+struct JobListView: View {
+    @StateObject var viewModel = JobListViewModel()
+
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(viewModel.jobs) { job in
+                    NavigationLink(destination: JobDetailView(job: job)) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(job.title)
+                                .font(.headline)
+
+                            Text(job.company)
+                                .font(.subheadline)
+
+                            Text(job.location)
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.vertical, 6)
+                    }
+                }
+            }
+            .listStyle(PlainListStyle())
+            .navigationTitle("Available Jobs")
+            .refreshable {
+                viewModel.fetchJobs()
+            }
+        }
+        .onAppear {
+            viewModel.fetchJobs()
+        }
+    }
+}
+

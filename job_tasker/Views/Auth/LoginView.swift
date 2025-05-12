@@ -1,10 +1,3 @@
-//
-//  LoginView.swift
-//  job_listings
-//
-//  Created by Maher Parkar on 9/5/2025.
-//
-
 import SwiftUI
 
 struct LoginView: View {
@@ -12,41 +5,53 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var errorMessage = ""
+    @State private var navigateToDashboard = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Login").font(.largeTitle).bold()
+        ScrollView {
+            VStack(spacing: 24) {
+                Text("Login")
+                    .font(.largeTitle)
+                    .bold()
 
-            TextField("Email", text: $email)
-                .autocapitalization(.none)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(8)
+                TextField("Email", text: $email)
+                    .autocapitalization(.none)
+                    .keyboardType(.emailAddress)
+                    .padding()
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(10)
 
-            SecureField("Password", text: $password)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(8)
+                SecureField("Password", text: $password)
+                    .padding()
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(10)
 
-            if !errorMessage.isEmpty {
-                Text(errorMessage).foregroundColor(.red)
-            }
+                if !errorMessage.isEmpty {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
 
-            Button("Log In") {
-                authVM.login(email: email, password: password) { error in
-                    if let error = error {
-                        self.errorMessage = error.localizedDescription
+                Button("Log In") {
+                    authVM.login(email: email, password: password) { error in
+                        if let error = error {
+                            self.errorMessage = error.localizedDescription
+                        } else {
+                            self.navigateToDashboard = true
+                        }
                     }
                 }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+
+                NavigationLink("Don't have an account? Sign up", destination: SignupView())
             }
             .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
-
-            NavigationLink("Don't have an account? Sign Up", destination: SignupView())
-                .padding(.top, 10)
         }
-        .padding()
+        .navigationBarHidden(true)
     }
 }
+

@@ -6,7 +6,8 @@
 //
 
 import Foundation
-import FirebaseFirestoreSwift
+import FirebaseFirestore
+
 
 struct Job: Identifiable, Codable {
     @DocumentID var id: String?
@@ -14,5 +15,6 @@ struct Job: Identifiable, Codable {
     var company: String
     var location: String
     var description: String
+    var postedBy: String
     var postedDate: Date
 }

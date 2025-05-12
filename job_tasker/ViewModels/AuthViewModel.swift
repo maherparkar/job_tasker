@@ -1,51 +1,86 @@
-//
-//  AuthViewModel.swift
-//  job_listings
-//
-//  Created by Maher Parkar on 9/5/2025.
-//
-
 import Foundation
 import FirebaseAuth
-import Combine
+import FirebaseFirestore
 
 class AuthViewModel: ObservableObject {
-    @Published var user: User?
-    @Published var isAuthenticated: Bool = false
-    private var handle: AuthStateDidChangeListenerHandle?
+    @Published var firebaseUser: FirebaseAuth.User?
+    @Published var appUser: AppUser?
+    private var db = Firestore.firestore()
 
     init() {
         listenToAuthChanges()
     }
 
     func listenToAuthChanges() {
-        handle = Auth.auth().addStateDidChangeListener { _, user in
-            self.isAuthenticated = user != nil
+        Auth.auth().addStateDidChangeListener { [weak self] auth, user in
+            self?.firebaseUser = user
+            if let user = user {
+                self?.fetchUserProfile(uid: user.uid)
+            }
         }
     }
 
-    func signUp(email: String, password: String, name: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if let error = error {
+    func signUp(email: String, password: String, name: String, role: String, completion: @escaping (Error?) -> Void) {
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
+            guard let self = self, let user = result?.user, error == nil else {
                 completion(error)
                 return
             }
-            let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-            changeRequest?.displayName = name
-            changeRequest?.commitChanges(completion: { _ in
-                completion(nil)
-            })
+
+            self.firebaseUser = user
+
+            let userData: [String: Any] = [
+                "uid": user.uid,
+                "name": name,
+                "email": email,
+                "role": role
+            ]
+
+            db.collection("users").document(user.uid).setData(userData) { error in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        self.appUser = AppUser(
+                            id: user.uid,
+                            name: name,
+                            email: email,
+                            role: role
+                        )
+                    }
+                }
+                completion(error)
+            }
         }
     }
 
     func login(email: String, password: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: password) { _, error in
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            if let user = result?.user {
+                self?.firebaseUser = user
+                self?.fetchUserProfile(uid: user.uid)
+            }
             completion(error)
         }
     }
 
     func logout() {
         try? Auth.auth().signOut()
-        self.isAuthenticated = false
+        self.firebaseUser = nil
+        self.appUser = nil
+    }
+
+    func fetchUserProfile(uid: String) {
+        db.collection("users").document(uid).getDocument { [weak self] snapshot, error in
+            if let data = snapshot?.data() {
+                DispatchQueue.main.async {
+                    self?.appUser = AppUser(
+                        id: uid,
+                        name: data["name"] as? String ?? "",
+                        email: data["email"] as? String ?? "",
+                        role: data["role"] as? String ?? ""
+                    )
+                }
+            }
+        }
     }
 }
+

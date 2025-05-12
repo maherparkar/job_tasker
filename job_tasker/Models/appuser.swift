@@ -5,12 +5,9 @@
 //  Created by Maher Parkar on 9/5/2025.
 //
 
-import Foundation
-import FirebaseFirestore
-
-struct User: Identifiable, Codable {
-    @DocumentID var id: String?
+struct AppUser: Identifiable, Codable {
+    var id: String
     var name: String
     var email: String
-    var savedJobs: [String] // Job IDs
+    var role: String
 }
