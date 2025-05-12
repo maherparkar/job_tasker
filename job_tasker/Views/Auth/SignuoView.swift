@@ -1,10 +1,3 @@
-//
-//  SignupView.swift
-//  job_listings
-//
-//  Created by Maher Parkar on 9/5/2025.
-//
-
 import SwiftUI
 
 struct SignupView: View {
@@ -45,36 +38,32 @@ struct SignupView: View {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
+                        .multilineTextAlignment(.center)
                 }
 
-                Button(action: {
-                    isLoading = true
-                    authVM.signUp(email: email, password: password, name: name, role: selectedRole) { error in
-                        isLoading = false
-                        if let error = error {
-                            self.errorMessage = error.localizedDescription
+                if selectedRole.isEmpty {
+                    Text("Please go back and select a role before signing up.")
+                        .foregroundColor(.orange)
+                        .multilineTextAlignment(.center)
+                } else {
+                    Button(isLoading ? "Signing up..." : "Sign Up") {
+                        isLoading = true
+                        authVM.signUp(email: email, password: password, name: name, role: selectedRole) { error in
+                            isLoading = false
+                            if let error = error {
+                                self.errorMessage = error.localizedDescription
+                            }
                         }
                     }
-                }) {
-                    if isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    } else {
-                        Text("Sign Up")
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .disabled(isLoading)
                 }
 
                 NavigationLink("Already have an account? Log In", destination: LoginView())
-                    .padding(.top, 10)
             }
             .padding()
         }
