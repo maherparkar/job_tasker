@@ -5,10 +5,10 @@
 //  Created by Maher Parkar on 11/5/2025.
 //
 
-import SwiftUI
 import Firebase
 import FirebaseAuth
 import FirebaseFirestore
+import SwiftUI
 
 struct PostJobView: View {
     @State private var title = ""
@@ -18,70 +18,83 @@ struct PostJobView: View {
     @State private var successMessage = ""
     @State private var errorMessage = ""
     
+    @State private var goToMyPosts = false
+
     @EnvironmentObject var authVM: AuthViewModel
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    Text("Post a New Job")
-                        .font(.title)
-                        .bold()
+        NavigationStack {
+            NavigationLink("", destination: PosterJobListView(), isActive: $goToMyPosts)
+            VStack(spacing: 20) {
+                Text("Post a New Job")
+                    .font(.title)
+                    .bold()
 
-                    TextField("Job Title", text: $title)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("Job Title", text: $title)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                    TextField("Company", text: $company)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("Company", text: $company)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                    TextField("Location", text: $location)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextField("Location", text: $location)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                    ZStack(alignment: .topLeading) {
-                        if description.isEmpty {
-                            Text("Job Description")
-                                .foregroundColor(.gray)
-                                .padding(.top, 8)
-                                .padding(.leading, 5)
-                        }
-
-                        TextEditor(text: $description)
-                            .frame(height: 150)
-                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3)))
-                            .multilineTextAlignment(.leading)
+                ZStack(alignment: .topLeading) {
+                    if description.isEmpty {
+                        Text("Job Description")
+                            .foregroundColor(.gray)
+                            .padding(.top, 8)
+                            .padding(.leading, 5)
                     }
 
-                    if !successMessage.isEmpty {
-                        Text(successMessage)
-                            .foregroundColor(.green)
-                            .font(.subheadline)
-                    }
+                    TextEditor(text: $description)
+                        .frame(height: 150)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8).stroke(
+                                Color.gray.opacity(0.3))
+                        )
+                        .multilineTextAlignment(.leading)
+                }
 
-                    if !errorMessage.isEmpty {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                            .font(.subheadline)
-                    }
+                if !successMessage.isEmpty {
+                    Text(successMessage)
+                        .foregroundColor(.green)
+                        .font(.subheadline)
+                }
 
-                    Button("Post Job") {
-                        postJob()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                if !errorMessage.isEmpty {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.subheadline)
+                }
+
+                Button("Post Job") {
+                    postJob()
                 }
                 .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
             }
+            .padding()
             .navigationTitle("Job Posting")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink(
+                        destination: PosterJobListView(),
+                        label: {
+                            Text("My Posts")
+                        })
+                }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        authVM.logout()
-                    }, label: {
-                        Text("Logout")
-                    })
+                    Button(
+                        action: {
+                            authVM.logout()
+                        },
+                        label: {
+                            Text("Logout")
+                        })
                 }
             }
         }
@@ -101,7 +114,7 @@ struct PostJobView: View {
             "location": location,
             "description": description,
             "postedBy": user.uid,
-            "postedDate": Timestamp()
+            "postedDate": Timestamp(),
         ]
 
         db.collection("jobs").addDocument(data: jobData) { error in
@@ -119,12 +132,14 @@ struct PostJobView: View {
                 // Optional: auto-clear success message
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     self.successMessage = ""
+                    goToMyPosts = true
                 }
             }
         }
+        
     }
 }
 
 #Preview {
-    PostJobView()
+    PostJobView().environmentObject(AuthViewModel())
 }

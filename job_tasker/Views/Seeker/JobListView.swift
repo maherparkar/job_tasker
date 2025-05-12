@@ -13,7 +13,7 @@ struct JobListView: View {
     @EnvironmentObject var authVM: AuthViewModel
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 ForEach(viewModel.jobs) { job in
                     NavigationLink(destination: JobDetailView(job: job)) {
@@ -35,6 +35,13 @@ struct JobListView: View {
             .listStyle(PlainListStyle())
             .navigationTitle("Available Jobs")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink(destination: {
+                        SeekerJobListView()
+                    }, label: {
+                        Text("My Jobs")
+                    })
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
                         authVM.logout()
