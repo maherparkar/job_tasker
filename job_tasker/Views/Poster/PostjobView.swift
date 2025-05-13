@@ -10,9 +10,6 @@ import FirebaseAuth
 import FirebaseFirestore
 import SwiftUI
 
-/*
- View with form to add new job
- */
 struct PostJobView: View {
     @State private var title = ""
     @State private var company = ""
@@ -21,7 +18,7 @@ struct PostJobView: View {
     @State private var successMessage = ""
     @State private var errorMessage = ""
     @State private var salary = ""
-    
+
     @State private var goToMyPosts = false
 
     @EnvironmentObject var authVM: AuthViewModel
@@ -29,22 +26,38 @@ struct PostJobView: View {
     var body: some View {
         NavigationStack {
             NavigationLink("", destination: PosterJobListView(), isActive: $goToMyPosts)
+
             VStack(spacing: 20) {
-                Text("Post a New Job")
+                Text("📢 Post a New Job")
                     .font(.title)
                     .bold()
 
-                TextField("Job Title", text: $title)
+                Group {
+                    HStack {
+                        Image(systemName: "briefcase")
+                        TextField("Job Title", text: $title)
+                    }
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                TextField("Company", text: $company)
+                    HStack {
+                        Image(systemName: "building.2")
+                        TextField("Company", text: $company)
+                    }
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                TextField("Location", text: $location)
+                    HStack {
+                        Image(systemName: "location")
+                        TextField("Location", text: $location)
+                    }
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                TextField("Salary", text: $salary)
-                    .keyboardType(.numberPad)
+
+                    HStack {
+                        Image(systemName: "dollarsign.circle")
+                        TextField("Salary", text: $salary)
+                            .keyboardType(.numberPad)
+                    }
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
 
                 ZStack(alignment: .topLeading) {
                     if description.isEmpty {
@@ -57,8 +70,7 @@ struct PostJobView: View {
                     TextEditor(text: $description)
                         .frame(height: 150)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8).stroke(
-                                Color.gray.opacity(0.3))
+                            RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3))
                         )
                         .multilineTextAlignment(.leading)
                 }
@@ -75,12 +87,12 @@ struct PostJobView: View {
                         .font(.subheadline)
                 }
 
-                Button("Post Job") {
+                Button("🚀 Post This Job") {
                     postJob()
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
-                .background(Color.blue)
+                .background(Color.purple)
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }
@@ -88,20 +100,14 @@ struct PostJobView: View {
             .navigationTitle("Job Posting")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    NavigationLink(
-                        destination: PosterJobListView(),
-                        label: {
-                            Text("My Posts")
-                        })
+                    NavigationLink(destination: PosterJobListView()) {
+                        Text("📄 My Posts")
+                    }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(
-                        action: {
-                            authVM.logout()
-                        },
-                        label: {
-                            Text("Logout")
-                        })
+                    Button(action: { authVM.logout() }) {
+                        Text("Logout")
+                    }
                 }
             }
         }
@@ -122,8 +128,7 @@ struct PostJobView: View {
             "description": description,
             "salary": salary,
             "postedBy": user.uid,
-            "postedDate": Timestamp(),
-            
+            "postedDate": Timestamp()
         ]
 
         db.collection("jobs").addDocument(data: jobData) { error in
@@ -136,19 +141,19 @@ struct PostJobView: View {
                 self.title = ""
                 self.company = ""
                 self.location = ""
+                self.salary = ""
                 self.description = ""
 
-                // Optional: auto-clear success message
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                     self.successMessage = ""
                     goToMyPosts = true
                 }
             }
         }
-        
     }
 }
 
 #Preview {
     PostJobView().environmentObject(AuthViewModel())
 }
+
