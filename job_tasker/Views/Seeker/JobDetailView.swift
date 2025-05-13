@@ -7,6 +7,7 @@ struct JobDetailView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @State private var showApplyAnimation = false
     @State private var navigateToMyJobs = false
+    @State private var showApplyAlert = false
 
     var body: some View {
         ScrollView {
@@ -51,26 +52,49 @@ struct JobDetailView: View {
             .padding()
         }
         .navigationTitle("Job Details")
+        .alert(isPresented: $showApplyAlert) {
+            Alert(
+                title: Text("Success"),
+                message: Text("You have successfully applied for this job."),
+                dismissButton: .default(Text("OK"), action: {
+                    navigateToMyJobs = true
+                })
+            )
+        }
     }
 
     private func applyForJob() {
         guard let user = Auth.auth().currentUser else { return }
 
         let db = Firestore.firestore()
-        let appliedData: [String: Any] = [
-            "jobId": job.id ?? UUID().uuidString,
-            "userId": user.uid,
-            "appliedAt": Timestamp()
+        let userId = user.uid
+
+        let applicantData: [String: Any] = [
+            "userId": userId,
+            "name": authVM.appUser?.name ?? "Unknown",
+            "email": authVM.appUser?.email ?? "Unknown"
         ]
 
-        db.collection("applied_jobs").addDocument(data: appliedData) { error in
-            if error == nil {
-                withAnimation {
-                    showApplyAnimation = true
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    showApplyAnimation = false
-                    navigateToMyJobs = true
+        // Save to applied_jobs (optional for tracking)
+        db.collection("applied_jobs").addDocument(data: [
+            "jobId": job.id ?? "",
+            "userId": userId,
+            "appliedAt": Timestamp()
+        ])
+
+        // Append applicant to the job document
+        if let jobId = job.id {
+            db.collection("jobs").document(jobId).updateData([
+                "applicants": FieldValue.arrayUnion([applicantData])
+            ]) { error in
+                if error == nil {
+                    withAnimation {
+                        showApplyAnimation = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        showApplyAnimation = false
+                        showApplyAlert = true  // Triggers alert
+                    }
                 }
             }
         }
