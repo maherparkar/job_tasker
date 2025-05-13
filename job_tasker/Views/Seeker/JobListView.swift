@@ -14,27 +14,36 @@ struct JobListView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(viewModel.jobs) { job in
-                    NavigationLink(destination: JobDetailView(job: job)) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(job.title)
-                                .font(.headline)
+            VStack {
+                // Search bar
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    TextField("Search jobs...", text: $viewModel.searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+                .padding(.horizontal)
+                
+                List {
+                    ForEach(viewModel.filteredJobs) { job in
+                        NavigationLink(destination: JobDetailView(job: job)) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(job.title)
+                                    .font(.headline)
 
-                            Text(job.company)
-                                .font(.subheadline)
+                                Text(job.company)
+                                    .font(.subheadline)
                             
-                            
-
-                            Text(job.location)
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                                Text(job.location)
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.vertical, 6)
                         }
-                        .padding(.vertical, 6)
                     }
                 }
+                .listStyle(PlainListStyle())
             }
-            .listStyle(PlainListStyle())
             .navigationTitle("Available Jobs")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
