@@ -1,12 +1,10 @@
-//
-//  joblistviewmodel.swift
-//  job_listings
-//
-//  Created by Maher Parkar on 9/5/2025.
-//
 import Foundation
 import Firebase
 import FirebaseFirestore
+
+/*
+ Job List View Model fetches all currently available jobs in the system
+ */
 
 class JobListViewModel: ObservableObject {
     @Published var jobs: [Job] = []

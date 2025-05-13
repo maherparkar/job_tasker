@@ -1,5 +1,8 @@
 import SwiftUI
 
+/*
+ View for login screen
+ */
 struct LoginView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @State private var email = ""

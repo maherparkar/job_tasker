@@ -1,6 +1,9 @@
 import SwiftUI
 import Firebase
 
+/*
+ Job Detail view for Posters. Shows job details and current applicants
+ */
 struct PosterJobDetailView: View {
     let job: Job
     @State private var showApplyAlert = false

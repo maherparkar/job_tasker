@@ -6,6 +6,7 @@ struct RootView: View {
 
     var body: some View {
         Group {
+            // Show screen based on if logged in or not, and show different screens for different roles
             if authVM.firebaseUser == nil {
                 SelectUserRoleView()
             } else if let role = authVM.appUser?.role {

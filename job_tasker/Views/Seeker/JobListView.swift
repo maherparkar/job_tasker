@@ -8,6 +8,9 @@
 import SwiftUI
 import Firebase
 
+/*
+ Job List view for Seekers who have not applied yet
+ */
 struct JobListView: View {
     @StateObject var viewModel = JobListViewModel()
     @EnvironmentObject var authVM: AuthViewModel

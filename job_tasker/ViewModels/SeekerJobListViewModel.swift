@@ -3,6 +3,11 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 
+/*
+ Seeker Job List View Model fetches all jobs in the system that a Seeker has applied to
+ */
+
+
 class SeekerJobListViewModel: ObservableObject {
     @Published var jobs: [Job] = []
 

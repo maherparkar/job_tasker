@@ -1,6 +1,9 @@
 import SwiftUI
 import Firebase
 
+/*
+ Job List view for all jobs current seeker has applied to
+ */
 struct SeekerJobDetailView: View {
     let job: Job
     @State private var showApplyAlert = false

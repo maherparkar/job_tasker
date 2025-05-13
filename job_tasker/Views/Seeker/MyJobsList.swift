@@ -9,6 +9,9 @@ import SwiftUI
 import Firebase
 import FirebaseAuth
 
+/*
+ Job List view for all jobs current seeker has applied to
+ */
 struct MyJobsListView: View {
     @State private var jobs: [Job] = []
 

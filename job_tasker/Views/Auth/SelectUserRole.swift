@@ -1,5 +1,8 @@
 import SwiftUI
 
+/*
+ View for selecting role
+ */
 struct SelectUserRoleView: View {
     @AppStorage("selectedRole") var selectedRole: String = ""
     @State private var navigateToSignup = false

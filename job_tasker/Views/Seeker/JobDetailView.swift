@@ -2,6 +2,9 @@ import SwiftUI
 import Firebase
 import FirebaseAuth
 
+/*
+ Job Detail view for Seekers who have not applied yet. Shows job details and apply button for seekers
+ */
 struct JobDetailView: View {
     let job: Job
     @EnvironmentObject var authVM: AuthViewModel

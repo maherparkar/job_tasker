@@ -10,6 +10,9 @@ import FirebaseAuth
 import FirebaseFirestore
 import SwiftUI
 
+/*
+ View with form to add new job
+ */
 struct PostJobView: View {
     @State private var title = ""
     @State private var company = ""

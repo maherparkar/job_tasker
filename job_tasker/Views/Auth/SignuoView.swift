@@ -1,5 +1,8 @@
 import SwiftUI
 
+/*
+ View for signup screen
+ */
 struct SignupView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @AppStorage("selectedRole") var selectedRole: String = ""

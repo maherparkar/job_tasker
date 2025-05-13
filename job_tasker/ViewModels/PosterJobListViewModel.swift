@@ -3,6 +3,10 @@ import FirebaseAuth
 import FirebaseFirestore
 import Foundation
 
+/*
+ Poster Job List View Model fetches all jobs in the system posted by a Poster
+ */
+
 class PosterJobListViewModel: ObservableObject {
     @Published var jobs: [Job] = []
 

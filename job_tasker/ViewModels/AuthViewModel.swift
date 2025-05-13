@@ -2,6 +2,9 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 
+/*
+ Class to manage login, signup and user session from Firestore
+ */
 class AuthViewModel: ObservableObject {
     @Published var firebaseUser: User?
     @Published var appUser: AppUser?

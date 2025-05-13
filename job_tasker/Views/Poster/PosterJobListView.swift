@@ -1,6 +1,9 @@
 
 import SwiftUI
 
+/*
+ Job List view for Posters. Shows list of all jobs by current poster
+ */
 struct PosterJobListView: View {
     @StateObject var posterJobListVM = PosterJobListViewModel()
 
